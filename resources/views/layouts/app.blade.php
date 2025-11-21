@@ -31,7 +31,13 @@
             </div>
 
             <nav class="px-4 pb-4">
-                {{ $sidebar }}
+                @if(auth()->user()->isAdmin())
+                    @include('layouts.sidebar.admin')
+                @elseif(auth()->user()->isAtasan())
+                    @include('layouts.sidebar.atasan')
+                @elseif(auth()->user()->isKaryawan())
+                    @include('layouts.sidebar.karyawan')
+                @endif
             </nav>
         </aside>
 

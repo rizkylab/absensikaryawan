@@ -25,7 +25,7 @@ class PayrollController extends Controller
 
         $summary = $this->payrollService->getPayrollSummary($period);
 
-        return view('admin.payroll.index', compact('payrolls', 'period', 'summary'));
+        return view('admin.payrolls.index', compact('payrolls', 'period', 'summary'));
     }
 
     public function generate(Request $request)
@@ -62,7 +62,7 @@ class PayrollController extends Controller
     public function show(Payroll $payroll)
     {
         $payroll->load('user', 'generator');
-        return view('admin.payroll.show', compact('payroll'));
+        return view('admin.payrolls.show', compact('payroll'));
     }
 
     public function download(Payroll $payroll)
