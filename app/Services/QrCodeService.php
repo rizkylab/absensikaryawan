@@ -25,12 +25,17 @@ class QrCodeService
     }
 
     /**
-     * Generate QR code image
+     * Generate QR code image (SVG format - no imagick required)
      */
     public function generateQrCodeImage(string $token): string
     {
+        // Use SVG format to avoid imagick dependency
         return QrCodeGenerator::size(300)
-            ->format('png')
+            ->format('svg')
+            ->backgroundColor(255, 255, 255)
+            ->color(0, 0, 0)
+            ->margin(2)
+            ->errorCorrection('M')
             ->generate($token);
     }
 

@@ -35,7 +35,9 @@
                     
                     @if($qrImage)
                         <div class="inline-block p-6 bg-white rounded-lg mb-4">
-                            <img src="data:image/png;base64,{{ base64_encode($qrImage) }}" alt="QR Code" class="w-64 h-64 mx-auto">
+                            <div class="w-64 h-64 mx-auto">
+                                {!! $qrImage !!}
+                            </div>
                         </div>
                     @endif
 

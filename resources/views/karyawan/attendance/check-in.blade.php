@@ -30,10 +30,12 @@
                         Scan QR Code
                     </label>
                     <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
-                        <div class="mb-4">
-                            <img src="data:image/png;base64,{{ base64_encode($qrCode ? app(\App\Services\QrCodeService::class)->generateQrCodeImage($qrCode->token) : '') }}" 
-                                 alt="QR Code" 
-                                 class="mx-auto w-64 h-64">
+                        <div class="mb-4 inline-block bg-white p-4 rounded-lg">
+                            @if($qrCode)
+                                <div class="w-64 h-64">
+                                    {!! app(\App\Services\QrCodeService::class)->generateQrCodeImage($qrCode->token) !!}
+                                </div>
+                            @endif
                         </div>
                         <p class="text-sm text-gray-500 dark:text-gray-400">
                             Valid for: {{ $qrCode ? $qrCode->valid_date->format('d M Y') : 'N/A' }}
