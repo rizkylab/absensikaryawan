@@ -50,6 +50,21 @@
                 </div>
             </div>
 
+            <!-- GPS & Location Settings -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">GPS & Location Settings</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GPS Radius (meters)</label>
+                        <input type="number" name="gps_radius" value="{{ $settings['gps_radius']->value ?? 100 }}" 
+                               min="0"
+                               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white" required>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Maximum distance allowed from office location (currently: {{ $settings['gps_radius']->value ?? 100 }}m)</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Face Recognition Settings -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Face Recognition</h3>

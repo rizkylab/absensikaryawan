@@ -30,12 +30,13 @@ class SettingController extends Controller
             'leave_deduction_per_day' => 'required|numeric|min:0',
             'company_name' => 'required|string|max:255',
             'company_address' => 'required|string|max:500',
+            'gps_radius' => 'required|integer|min:0',
         ]);
 
         foreach ($request->except('_token') as $key => $value) {
             $type = match($key) {
                 'face_recognition_enabled' => 'boolean',
-                'late_tolerance', 'face_recognition_threshold' => 'integer',
+                'late_tolerance', 'face_recognition_threshold', 'gps_radius' => 'integer',
                 'late_penalty_per_minute', 'overtime_rate_per_hour', 'leave_deduction_per_day' => 'float',
                 default => 'string',
             };

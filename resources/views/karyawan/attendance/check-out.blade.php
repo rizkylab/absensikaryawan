@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">Check In</x-slot>
+    <x-slot name="header">Check Out</x-slot>
     
     <x-slot name="sidebar">
         <x-nav-link href="{{ route('karyawan.dashboard') }}">
@@ -19,35 +19,25 @@
 
     <div class="max-w-2xl mx-auto">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Check In</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Check Out</h2>
 
-            <form action="{{ route('karyawan.attendance.check-in.submit') }}" method="POST" enctype="multipart/form-data" x-data="checkInForm()" x-init="init()">
+            <!-- Check-in Info -->
+            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p class="text-sm text-blue-800 dark:text-blue-200">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    You checked in at {{ \Carbon\Carbon::parse($todayAttendance->check_in)->format('H:i') }}
+                </p>
+            </div>
+
+            <form action="{{ route('karyawan.attendance.check-out.submit') }}" method="POST" enctype="multipart/form-data" x-data="checkOutForm()" x-init="init()">
                 @csrf
-
-                <!-- QR Code Section -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Scan QR Code
-                    </label>
-                    <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
-                        <div class="mb-4 inline-block bg-white p-4 rounded-lg">
-                            @if($qrCode)
-                                <div class="w-64 h-64">
-                                    {!! app(\App\Services\QrCodeService::class)->generateQrCodeImage($qrCode->token) !!}
-                                </div>
-                            @endif
-                        </div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Valid for: {{ $qrCode ? $qrCode->valid_date->format('d M Y') : 'N/A' }}
-                        </p>
-                    </div>
-                    <input type="hidden" name="qr_token" value="{{ $qrCode->token ?? '' }}" required>
-                </div>
 
                 <!-- GPS Location -->
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        GPS Location
+                        GPS Location *
                     </label>
                     <button type="button" @click="getLocation()" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                         <span x-show="!locationObtained">Get My Location</span>
@@ -57,6 +47,9 @@
                     <input type="hidden" name="latitude" x-model="latitude" required>
                     <input type="hidden" name="longitude" x-model="longitude" required>
                     <input type="hidden" name="address" x-model="address">
+                    @error('latitude')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Camera Capture -->
@@ -74,7 +67,7 @@
                             <!-- Capture Button -->
                             <button type="button" 
                                     @click="capturePhoto()" 
-                                    class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2">
+                                    class="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -115,17 +108,17 @@
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="w-full px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
+                        class="w-full px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
                         :disabled="!locationObtained || !photoCaptured">
                     <span x-show="!locationObtained || !photoCaptured">Please complete GPS and Photo</span>
-                    <span x-show="locationObtained && photoCaptured">Check In Now</span>
+                    <span x-show="locationObtained && photoCaptured">Check Out Now</span>
                 </button>
             </form>
         </div>
     </div>
 
     <script>
-        function checkInForm() {
+        function checkOutForm() {
             return {
                 latitude: null,
                 longitude: null,

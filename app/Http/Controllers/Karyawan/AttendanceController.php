@@ -48,7 +48,7 @@ class AttendanceController extends Controller
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'qr_token' => 'required|string',
-            'photo' => 'nullable|image|max:5120', // 5MB
+            'photo_data' => 'required|string', // Base64 encoded image from camera
             'address' => 'nullable|string',
         ]);
 
@@ -92,7 +92,7 @@ class AttendanceController extends Controller
         $request->validate([
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'photo' => 'nullable|image|max:5120',
+            'photo_data' => 'required|string', // Base64 encoded image from camera
             'address' => 'nullable|string',
         ]);
 

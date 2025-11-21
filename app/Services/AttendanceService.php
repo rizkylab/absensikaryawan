@@ -55,21 +55,26 @@ class AttendanceService
             ];
         }
 
-        // Validate Face Recognition (if enabled)
+        // Store photo from base64 data
+        $photoPath = null;
         $faceScore = null;
-        if ($this->faceService->isEnabled() && isset($data['photo'])) {
-            $photoPath = $this->storePhoto($data['photo'], 'check_in');
-            $faceResult = $this->faceService->verify($photoPath, $user->id);
+        if (isset($data['photo_data'])) {
+            $photoPath = $this->storePhotoFromBase64($data['photo_data'], 'check_in', $user->id);
             
-            if (!$faceResult['verified']) {
-                return [
-                    'success' => false,
-                    'message' => 'Face verification failed',
-                    'score' => $faceResult['score'],
-                ];
+            // Validate Face Recognition (if enabled)
+            if ($this->faceService->isEnabled()) {
+                $faceResult = $this->faceService->verify($photoPath, $user->id);
+                
+                if (!$faceResult['verified']) {
+                    return [
+                        'success' => false,
+                        'message' => 'Face verification failed',
+                        'score' => $faceResult['score'],
+                    ];
+                }
+                
+                $faceScore = $faceResult['score'];
             }
-            
-            $faceScore = $faceResult['score'];
         }
 
         // Calculate late duration
@@ -136,12 +141,17 @@ class AttendanceService
             $data['longitude']
         );
 
-        // Validate Face Recognition (if enabled)
+        // Store photo from base64 data
+        $photoPath = null;
         $faceScore = null;
-        if ($this->faceService->isEnabled() && isset($data['photo'])) {
-            $photoPath = $this->storePhoto($data['photo'], 'check_out');
-            $faceResult = $this->faceService->verify($photoPath, $user->id);
-            $faceScore = $faceResult['score'];
+        if (isset($data['photo_data'])) {
+            $photoPath = $this->storePhotoFromBase64($data['photo_data'], 'check_out', $user->id);
+            
+            // Validate Face Recognition (if enabled)
+            if ($this->faceService->isEnabled()) {
+                $faceResult = $this->faceService->verify($photoPath, $user->id);
+                $faceScore = $faceResult['score'];
+            }
         }
 
         // Calculate work duration and early leave
@@ -175,11 +185,22 @@ class AttendanceService
     }
 
     /**
-     * Store photo
+     * Store photo from base64 data
      */
-    protected function storePhoto($photo, string $type): string
+    protected function storePhotoFromBase64(string $base64Data, string $type, int $userId): string
     {
-        $path = $photo->store('attendance/' . $type, 'public');
+        // Remove data:image/jpeg;base64, prefix
+        $image = str_replace('data:image/jpeg;base64,', '', $base64Data);
+        $image = str_replace(' ', '+', $image);
+        $imageData = base64_decode($image);
+        
+        // Generate unique filename
+        $filename = $type . '_' . $userId . '_' . time() . '.jpg';
+        $path = 'attendance/' . $type . '/' . $filename;
+        
+        // Store file
+        Storage::disk('public')->put($path, $imageData);
+        
         return $path;
     }
 
@@ -203,7 +224,8 @@ class AttendanceService
      */
     protected function calculateWorkDuration(string $checkIn, Carbon $checkOut): int
     {
-        $start = Carbon::createFromFormat('H:i:s', $checkIn);
+        // Parse check_in - it could be datetime or time only
+        $start = Carbon::parse($checkIn);
         return $checkOut->diffInMinutes($start);
     }
 
