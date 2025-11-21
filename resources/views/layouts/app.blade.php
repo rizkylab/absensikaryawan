@@ -135,6 +135,24 @@
                 position: 'top-end'
             });
         @endif
+
+        // Global function for delete confirmation
+        function confirmDelete(formId, title = 'Are you sure?', text = 'This action cannot be undone!') {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
     </script>
 </body>
 </html>
