@@ -67,7 +67,7 @@ class LeaveController extends Controller
     {
         // Ensure user can only view their own leave
         if ($leave->user_id !== auth()->id()) {
-            abort(403);
+            abort(403, 'You can only view your own leave requests.');
         }
 
         return view('karyawan.leave.show', compact('leave'));
