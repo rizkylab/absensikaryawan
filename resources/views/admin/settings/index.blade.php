@@ -23,7 +23,6 @@
 
         <form action="{{ route('admin.settings.update') }}" method="POST">
             @csrf
-            @method('PUT')
 
             <!-- Work Hours Settings -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
