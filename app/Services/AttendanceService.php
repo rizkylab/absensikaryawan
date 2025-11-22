@@ -216,7 +216,7 @@ class AttendanceService
             return 0;
         }
 
-        return $checkIn->diffInMinutes($startTime);
+        return $checkIn->diffInMinutes($startTime, true);
     }
 
     /**
@@ -226,7 +226,7 @@ class AttendanceService
     {
         // Parse check_in - it could be datetime or time only
         $start = Carbon::parse($checkIn);
-        return $checkOut->diffInMinutes($start);
+        return $checkOut->diffInMinutes($start, true);
     }
 
     /**
@@ -240,7 +240,7 @@ class AttendanceService
             return 0;
         }
 
-        return $endTime->diffInMinutes($checkOut);
+        return $endTime->diffInMinutes($checkOut, true);
     }
 
     /**
