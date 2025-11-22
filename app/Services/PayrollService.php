@@ -193,7 +193,8 @@ class PayrollService
             'total_base_salary' => $payrolls->sum('base_salary'),
             'total_penalties' => $payrolls->sum('late_penalty') + $payrolls->sum('early_leave_penalty') + $payrolls->sum('leave_deduction'),
             'total_bonuses' => $payrolls->sum('overtime_bonus'),
-            'total_payout' => $payrolls->sum('total_salary'),
+            'total_payroll' => $payrolls->sum('total_salary'),
+            'average_salary' => $payrolls->count() > 0 ? $payrolls->sum('total_salary') / $payrolls->count() : 0,
         ];
     }
 }
